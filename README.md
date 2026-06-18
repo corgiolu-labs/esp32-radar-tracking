@@ -12,7 +12,19 @@ Two modes:
 - **Sweep** — classic angular scan 0–180°, streaming `angle,distance`.
 - **Tracking** — when an object enters the lock range the radar **auto-locks** onto it, follows it, and estimates its **radial velocity**, streaming `TRACK,angle,distance,velocity`.
 
+## Demo
+
+<p align="center">
+  <img src="docs/images/demo.gif" width="280"><br>
+  <em>The ESP32 radar sweeping live, driven from the Android app over Bluetooth.<br>▶ <a href="docs/video/demo.mp4">Watch the demo clip</a></em>
+</p>
+
 ## Hardware & wiring
+
+<p align="center">
+  <img src="docs/images/hardware.jpg" width="660"><br>
+  <em>The radar head — the MG996R servo turning the HC-SR04 on a 3D-printed mount.</em>
+</p>
 
 | Component | Notes |
 |---|---|
