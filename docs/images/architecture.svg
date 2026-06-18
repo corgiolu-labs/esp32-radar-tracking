@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 380" font-family="'Segoe UI',system-ui,Arial,sans-serif">
+  <defs>
+    <marker id="ab" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/></marker>
+    <marker id="as" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/></marker>
+  </defs>
+
+  <rect x="2" y="2" width="836" height="376" rx="14" fill="#f7f9fc" stroke="#cbd5e1"/>
+  <text x="28" y="36" font-size="17" font-weight="700" fill="#1e293b">System architecture</text>
+
+  <!-- ESP32 side -->
+  <rect x="36" y="84" width="252" height="244" rx="10" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+  <text x="162" y="112" text-anchor="middle" font-size="16" font-weight="700" fill="#1e293b">ESP32</text>
+  <text x="162" y="130" text-anchor="middle" font-size="12" fill="#64748b">Wemos D1 Mini32 · Arduino/PlatformIO</text>
+
+  <rect x="58" y="146" width="208" height="50" rx="7" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="162" y="167" text-anchor="middle" font-size="13.5" font-weight="600" fill="#3730a3">MG996R servo</text>
+  <text x="162" y="184" text-anchor="middle" font-size="11.5" fill="#4f46e5">angular sweep 0–180°</text>
+
+  <rect x="58" y="206" width="208" height="50" rx="7" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+  <text x="162" y="227" text-anchor="middle" font-size="13.5" font-weight="600" fill="#065f46">HC-SR04</text>
+  <text x="162" y="244" text-anchor="middle" font-size="11.5" fill="#059669">ultrasonic distance</text>
+
+  <text x="162" y="292" text-anchor="middle" font-size="12.5" font-weight="600" fill="#b45309">auto-lock target + velocity</text>
+  <text x="162" y="309" text-anchor="middle" font-size="11" fill="#94a3b8">(tracking mode)</text>
+
+  <!-- link -->
+  <text x="430" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="#2563eb">Bluetooth Classic</text>
+  <line x1="294" y1="150" x2="556" y2="150" stroke="#2563eb" stroke-width="2.5" marker-end="url(#ab)"/>
+  <text x="425" y="142" text-anchor="middle" font-size="11.5" fill="#334155">telemetry &#8594; <tspan font-family="monospace">angle,distance</tspan></text>
+  <text x="425" y="172" text-anchor="middle" font-size="11.5" fill="#334155"><tspan font-family="monospace">TRACK,angle,distance,velocity</tspan></text>
+
+  <line x1="556" y1="240" x2="294" y2="240" stroke="#64748b" stroke-width="2.5" marker-end="url(#as)"/>
+  <text x="425" y="232" text-anchor="middle" font-size="11.5" fill="#334155">commands &#8592;</text>
+  <text x="425" y="262" text-anchor="middle" font-size="11" fill="#475569"><tspan font-family="monospace">START · STOP · VELOCITA · RANGE</tspan></text>
+
+  <!-- Android phone -->
+  <rect x="576" y="64" width="208" height="252" rx="20" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+  <rect x="594" y="92" width="172" height="170" rx="6" fill="#0b1f14"/>
+  <!-- mini radar -->
+  <g stroke="#22c55e" fill="none" stroke-width="1.4" opacity="0.85">
+    <path d="M608,250 A72,72 0 0 1 752,250"/>
+    <path d="M628,250 A52,52 0 0 1 732,250"/>
+    <path d="M648,250 A32,32 0 0 1 712,250"/>
+    <line x1="608" y1="250" x2="752" y2="250"/>
+  </g>
+  <path d="M680,250 L744,206 A78,78 0 0 0 680,172 Z" fill="#22c55e" opacity="0.18"/>
+  <line x1="680" y1="250" x2="744" y2="206" stroke="#4ade80" stroke-width="2"/>
+  <circle cx="726" cy="214" r="4.5" fill="#ef4444"/>
+  <text x="680" y="290" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1e293b">Android app</text>
+  <text x="680" y="307" text-anchor="middle" font-size="11.5" fill="#64748b">Jetpack Compose · real-time radar UI</text>
+</svg>

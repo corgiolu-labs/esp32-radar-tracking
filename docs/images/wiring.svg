@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 440" font-family="'Segoe UI',system-ui,Arial,sans-serif">
+  <rect x="2" y="2" width="856" height="436" rx="14" fill="#f7f9fc" stroke="#cbd5e1"/>
+  <text x="28" y="34" font-size="17" font-weight="700" fill="#1e293b">Wiring</text>
+
+  <!-- power rails -->
+  <line x1="92" y1="78" x2="800" y2="78" stroke="#dc2626" stroke-width="3"/>
+  <text x="86" y="70" text-anchor="end" font-size="12.5" font-weight="700" fill="#dc2626">+5 V</text>
+  <text x="96" y="70" font-size="11" fill="#94a3b8">stable supply (servo)</text>
+  <line x1="92" y1="400" x2="800" y2="400" stroke="#334155" stroke-width="3"/>
+  <text x="86" y="416" text-anchor="end" font-size="12.5" font-weight="700" fill="#334155">GND</text>
+
+  <!-- ESP32 (center) -->
+  <rect x="350" y="158" width="170" height="150" rx="10" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+  <text x="435" y="226" text-anchor="middle" font-size="16" font-weight="700" fill="#1e293b">ESP32</text>
+  <text x="435" y="244" text-anchor="middle" font-size="11.5" fill="#64748b">Wemos D1 Mini32</text>
+  <text x="360" y="210" font-size="11.5" font-weight="600" fill="#ea580c">IO25</text>
+  <text x="510" y="200" text-anchor="end" font-size="11.5" font-weight="600" fill="#2563eb">IO26</text>
+  <text x="510" y="262" text-anchor="end" font-size="11.5" font-weight="600" fill="#16a34a">IO27</text>
+
+  <!-- Servo (left) -->
+  <rect x="120" y="180" width="150" height="120" rx="8" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+  <text x="195" y="232" text-anchor="middle" font-size="14" font-weight="700" fill="#1e293b">MG996R</text>
+  <text x="195" y="250" text-anchor="middle" font-size="12" fill="#64748b">servo</text>
+  <text x="262" y="210" text-anchor="end" font-size="11" font-weight="600" fill="#ea580c">PWM</text>
+
+  <!-- HC-SR04 (right) -->
+  <rect x="600" y="158" width="170" height="150" rx="8" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+  <text x="685" y="240" text-anchor="middle" font-size="14" font-weight="700" fill="#1e293b">HC-SR04</text>
+  <text x="685" y="258" text-anchor="middle" font-size="11.5" fill="#64748b">ultrasonic</text>
+  <text x="610" y="200" font-size="11" font-weight="600" fill="#2563eb">TRIG</text>
+  <text x="610" y="262" font-size="11" font-weight="600" fill="#16a34a">ECHO</text>
+
+  <!-- signal wires -->
+  <line x1="270" y1="205" x2="350" y2="205" stroke="#ea580c" stroke-width="2.5"/>
+  <line x1="520" y1="205" x2="600" y2="205" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="520" y1="255" x2="600" y2="255" stroke="#16a34a" stroke-width="2.5"/>
+
+  <!-- power taps -->
+  <g stroke="#dc2626" stroke-width="2.3">
+    <line x1="170" y1="180" x2="170" y2="78"/>
+    <line x1="435" y1="158" x2="435" y2="78"/>
+    <line x1="650" y1="158" x2="650" y2="78"/>
+  </g>
+  <g stroke="#334155" stroke-width="2.3">
+    <line x1="220" y1="300" x2="220" y2="400"/>
+    <line x1="470" y1="308" x2="470" y2="400"/>
+    <line x1="720" y1="308" x2="720" y2="400"/>
+  </g>
+  <g fill="#dc2626"><circle cx="170" cy="78" r="3.4"/><circle cx="435" cy="78" r="3.4"/><circle cx="650" cy="78" r="3.4"/></g>
+  <g fill="#334155"><circle cx="220" cy="400" r="3.4"/><circle cx="470" cy="400" r="3.4"/><circle cx="720" cy="400" r="3.4"/></g>
+
+  <text x="430" y="430" text-anchor="middle" font-size="11.5" fill="#b45309">⚠ Echo (IO27) is 5 V — add a voltage divider / level shifter to the 3.3 V ESP32 input.</text>
+</svg>

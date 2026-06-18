@@ -1,155 +1,110 @@
-# 📡 ESP32 Radar – Real-Time Ultrasonic Scanning & Tracking
+# 📡 ESP32 Radar — ultrasonic scanning & target tracking
 
-This project implements a real-time radar system based on ESP32, HC-SR04 ultrasonic sensor and an MG996R servo motor, with Bluetooth Classic data streaming and a Jetpack Compose Android application for visualization.
+A real-time **radar** built on an **ESP32**: a servo sweeps an **HC-SR04** ultrasonic sensor across 180°, streams the readings over **Bluetooth Classic**, and a custom **Android (Jetpack Compose)** app draws the radar and locks onto moving targets.
 
-The radar supports:
-- NORMAL mode — classic angular sweep 0–180°
-- TRACKING mode — target lock within 1 meter + velocity estimation
-- Android App — real-time radar visualization with fading green trace & red distance bar
-- Bluetooth Classic — compact data output "angle,distance"
-- Servo control — smooth PWM rotation with configurable speed ("VELOCITA:<value>")
+<p align="center">
+  <img src="docs/images/architecture.svg" width="760"><br>
+  <em>ESP32 (servo + ultrasonic) → Bluetooth → Android radar UI.</em>
+</p>
 
----
+Two modes:
 
-## 🚀 Features
+- **Sweep** — classic angular scan 0–180°, streaming `angle,distance`.
+- **Tracking** — when an object enters the lock range the radar **auto-locks** onto it, follows it, and estimates its **radial velocity**, streaming `TRACK,angle,distance,velocity`.
 
-### Hardware (ESP32)
-- HC-SR04 ultrasonic distance measurement
-- MG996R high-torque servo rotation
-- BluetoothSerial communication
-- Manual positioning ("POSIZIONA:<angle>")
-- Start/Stop scanning ("START", "STOP")
-- Tracking mode ("TRACK")
-- Tracking data format: "TRACK,angle,distance,velocity"
+## Hardware & wiring
 
----
+| Component | Notes |
+|---|---|
+| **ESP32** | Wemos D1 Mini32 (Bluetooth Classic) |
+| **HC-SR04** | ultrasonic distance sensor |
+| **MG996R servo** | 0–180° rotating mount |
+| **5 V supply** | stable current for the servo |
 
-## 🧠 Data Format
+| ESP32 pin | Connects to |
+|---|---|
+| **IO25** | servo **PWM** |
+| **IO26** | HC-SR04 **Trig** |
+| **IO27** | HC-SR04 **Echo** |
+| **5V / GND** | servo + HC-SR04 power |
 
-### Normal mode:
-angle,distance
+<p align="center">
+  <img src="docs/images/wiring.svg" width="760"><br>
+  <em>Wiring — power on the 5 V / GND rails, three signal lines to the ESP32.</em>
+</p>
 
-Example:
-90,200
+> ⚠️ The HC-SR04 **Echo** pin outputs 5 V. Feed it to the 3.3 V ESP32 input through a **voltage divider** (or level shifter) to stay within spec.
 
-### Tracking mode:
-TRACK,angle,distance,velocity
+## Bluetooth protocol
 
-Example:
-TRACK,45,120,32
+The ESP32 advertises as **`ESP32_Radar`** (Bluetooth Classic / SPP) and exchanges plain-text lines.
 
----
+**Telemetry (ESP32 → app):**
 
-## 🛠️ Hardware Setup
+```
+angle,distance                   e.g.  90,182.5      (distance "OUT" if no echo)
+TRACK,angle,distance,velocity    e.g.  TRACK,46,73.0,12.4
+```
 
-Component | Notes
----------|-------
-ESP32 DevKit | Bluetooth Classic enabled
-HC-SR04 | Ultrasonic sensor (Trig/Echo)
-MG996R Servo | 0–180° rotational sweep
-Level Shifter | For Echo pin if needed
-5V Power supply | Stable current for servo
+**Commands (app → ESP32):**
 
----
+| Command | Effect |
+|---|---|
+| `START` / `STOP` | resume / pause the radar |
+| `VELOCITA:<ms>` | sweep step delay, 20–200 ms (lower = faster) |
+| `RANGE:<cm>` | lock range for tracking, up to 400 cm |
 
-## 🔌 Wiring Example
+Every command is acknowledged (`ACK:…` / `NACK:…`).
 
-ESP32 Pin | Device
-----------|--------
-IO26 | HC-SR04 Trig
-IO27 | HC-SR04 Echo
-IO27 | Servo PWM output
-5V | Servo & HC-SR04
-GND | Common ground
+## How tracking works
 
-(Matches Alessandro's actual hardware setup.)
+1. The servo sweeps 0–180° in 2° steps; at each step the HC-SR04 measures distance and the pair is streamed.
+2. When a reading falls inside the lock window (**7 cm … RANGE**, default 100 cm), the radar **locks**.
+3. While locked it **fine-tunes** ±5° around the target, keeps the closest return, and computes velocity as Δdistance / Δtime → `TRACK,…`.
+4. If the target is lost it does a quick ±15° search; after a **1.5 s** timeout it drops the lock and resumes sweeping.
 
----
+The servo is driven with hand-timed PWM pulses (500–2500 µs); distance uses `pulseIn` with a 35 ms timeout (≈ 6 m ceiling).
 
-## 📱 Android App (Jetpack Compose)
+## Firmware (PlatformIO)
 
-The Android application displays the radar in real time with:
+```bash
+cd firmware
+pio run -t upload      # build & flash (set your serial port in platformio.ini)
+pio device monitor     # 115200 baud
+```
 
-- Semicircular radar UI
-- Green sweeping line with fading trail
-- Red distance bar proportional to obstacle distance
-- Angle & distance numerical values
-- AUTO / MANUAL toggle
-- Slider for scan speed ("VELOCITA:<value>")
-- Button for NORMAL / TRACKING modes
-- Real-time parsing of "angle,distance" or "TRACK,..."
+`firmware/src/main.cpp` is the tracking build; board `wemos_d1_mini32`, Arduino framework, `BluetoothSerial`.
 
----
+## Android app (Jetpack Compose)
 
-## 📂 Repository Structure
+`android-app/` is the Android Studio project (Kotlin + Compose). It:
 
+- connects to `ESP32_Radar` over Bluetooth Classic;
+- draws a **semicircular radar** with a green sweeping line and a fading trail;
+- shows a **distance bar** and the live **angle / distance** values;
+- has **AUTO / MANUAL** control, a **scan-speed** slider (`VELOCITA:…`) and a **lock-range** control (`RANGE:…`);
+- parses both `angle,distance` and `TRACK,…` frames in real time.
+
+Open `android-app/` in Android Studio, build, and install on a phone with Bluetooth Classic.
+
+## Repository structure
+
+```
 esp32-radar-tracking/
-│
-├── firmware/
-│   └── radar.ino
-│
-├── android-app/
-│   └── (source code)
-│
-├── images/
-│   └── radar.jpg
-│
+├── firmware/                ESP32 firmware (PlatformIO)
+│   ├── platformio.ini
+│   └── src/main.cpp
+├── android-app/             Android app (Jetpack Compose, Kotlin)
+│   └── app/src/main/java/com/example/radaresp32/
+├── docs/images/             architecture & wiring diagrams
 └── README.md
+```
 
----
+## Applications
 
-## 📸 Photos / Media
+Low-cost robotics sensing · obstacle scanning · educational radar visualization · mechatronics demos.
 
-Add your pictures here:
-- ESP32 + HC-SR04 assembly
-- Servo mechanics
-- Android radar UI screenshots
-- Wiring overview
+## Author
 
----
-
-## 🧩 Commands Supported
-
-Command | Description
---------|------------
-START | Begin automatic sweep
-STOP | Stop scanning
-VELOCITA:<value> | Set sweep speed
-POSIZIONA:<angle> | Move servo to specific angle
-TRACK | Enable tracking mode
-NORMAL | Return to normal sweep
-
----
-
-## 🧪 How It Works
-
-1. The ESP32 rotates the servo from 0° to 180° continuously.
-2. It reads distance via HC-SR04.
-3. It sends "angle,distance" via Bluetooth.
-4. The Android app draws the radar graphics frame by frame.
-5. In TRACKING mode:
-   - Detects the closest obstacle
-   - Locks onto it
-   - Computes velocity
-   - Sends: TRACK,angle,distance,velocity
-
----
-
-## 💡 Applications
-
-- Low-cost robotics sensing
-- Obstacle scanning
-- Educational radar visualization
-- Mechatronics demonstrations
-- Angular mapping systems
-
----
-
-## 📧 Contact
-
-For collaborations or custom embedded/robotics projects:  
-corgiolu.labs@gmail.com
-
----
-
-⭐ “Real-time embedded systems with practical applications.”
+**Alessandro Corgiolu** — System / Embedded Integration & Validation Engineer
+GitHub [@corgiolu-labs](https://github.com/corgiolu-labs) · part of a hardware portfolio that also includes [JONNY5](https://github.com/corgiolu-labs/jonny5), the [UAV LoRa transponder](https://github.com/corgiolu-labs/uav-lora-transponder), the [DED powder-flow sensor](https://github.com/corgiolu-labs/ded-powder-flow-sensor) and [RASPYNVERTER](https://github.com/corgiolu-labs/raspinverter).

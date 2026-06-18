@@ -1,0 +1,17 @@
+# PlatformIO (firmware)
+.pio/
+firmware/.pio/
+.vscode/
+
+# Android (android-app)
+**/build/
+.gradle/
+.idea/
+.kotlin/
+local.properties
+*.iml
+captures/
+
+# OS / editor
+.DS_Store
+Thumbs.db
