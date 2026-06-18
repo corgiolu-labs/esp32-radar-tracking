@@ -2,6 +2,8 @@
 
 A real-time **radar** built on an **ESP32**: a servo sweeps an **HC-SR04** ultrasonic sensor across 180°, streams the readings over **Bluetooth Classic**, and a custom **Android (Jetpack Compose)** app draws the radar and locks onto moving targets.
 
+**From a wired prototype to a portable radar.** The first version ran on an **Arduino Nano** tethered to a **PC over USB**, with the sweep drawn on a desktop screen. Swapping the Nano for an **ESP32** brought **Bluetooth** on board — so the radar can now be visualized **wirelessly on a smartphone**, untethered and portable, through a dedicated Android app. This repository is that ESP32 version.
+
 <p align="center">
   <img src="docs/images/architecture.svg" width="760"><br>
   <em>ESP32 (servo + ultrasonic) → Bluetooth → Android radar UI.</em>
@@ -22,8 +24,13 @@ Two modes:
 ## Hardware & wiring
 
 <p align="center">
-  <img src="docs/images/hardware.jpg" width="660"><br>
-  <em>The radar head — the MG996R servo turning the HC-SR04 on a 3D-printed mount.</em>
+  <img src="docs/images/build-front.jpg" width="300"><br>
+  <em>The ESP32 radar — HC-SR04 on the MG996R servo, on a 3D-printed tracked chassis.</em>
+</p>
+
+<p align="center">
+  <img src="docs/images/build-views.jpg" width="820"><br>
+  <em>Back · left (ESP32 board visible) · right · top.</em>
 </p>
 
 | Component | Notes |
@@ -97,6 +104,19 @@ pio device monitor     # 115200 baud
 - has **AUTO / MANUAL** control, a **scan-speed** slider (`VELOCITA:…`) and a **lock-range** control (`RANGE:…`);
 - parses both `angle,distance` and `TRACK,…` frames in real time.
 
+<table>
+  <tr>
+    <td><img src="docs/images/app-sweep.jpg" width="240"></td>
+    <td><img src="docs/images/app-detect.jpg" width="240"></td>
+    <td><img src="docs/images/app-manual.jpg" width="240"></td>
+  </tr>
+  <tr>
+    <td align="center"><em>sweep</em></td>
+    <td align="center"><em>target detected</em></td>
+    <td align="center"><em>manual positioning</em></td>
+  </tr>
+</table>
+
 Open `android-app/` in Android Studio, build, and install on a phone with Bluetooth Classic.
 
 ## Repository structure
@@ -108,8 +128,8 @@ esp32-radar-tracking/
 │   └── src/main.cpp
 ├── android-app/             Android app (Jetpack Compose, Kotlin)
 │   └── app/src/main/java/com/example/radaresp32/
-├── docs/images/             architecture & wiring diagrams
-└── README.md
+├── docs/images/             diagrams, build photos, app screenshots
+└── docs/video/              demo clip
 ```
 
 ## Applications
